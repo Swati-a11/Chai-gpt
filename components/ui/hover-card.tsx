@@ -4,16 +4,19 @@ import { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview-card
 
 import { cn } from "@/lib/utils"
 
+/** Root container for a hover-triggered preview card. */
 function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
   return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />
 }
 
+/** Element that opens the hover card preview on pointer hover. */
 function HoverCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
   return (
     <PreviewCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
   )
 }
 
+/** Floating preview panel displayed on hover over the trigger. */
 function HoverCardContent({
   className,
   side = "bottom",

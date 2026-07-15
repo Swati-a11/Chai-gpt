@@ -4,6 +4,12 @@ import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db";
 import type { User } from "@/lib/generated/prisma/client";
 
+/**
+ * Syncs the signed-in Clerk user into the local Prisma `User` table (upsert).
+ *
+ * @returns The created or updated Prisma user record.
+ * @throws {Error} When no Clerk session is present.
+ */
 export async function onBoard() {
     const clerkUser = await currentUser();
 

@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
 
+/** Date picker calendar grid for selecting days, weeks, or ranges. */
 function Calendar({
   className,
   classNames,
@@ -180,6 +181,7 @@ function Calendar({
   )
 }
 
+/** Individual day button within a calendar. */
 function CalendarDayButton({
   className,
   day,

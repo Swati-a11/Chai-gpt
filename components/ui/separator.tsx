@@ -4,6 +4,7 @@ import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
 
 import { cn } from "@/lib/utils"
 
+/** Visual divider separating content horizontally or vertically. */
 function Separator({
   className,
   orientation = "horizontal",

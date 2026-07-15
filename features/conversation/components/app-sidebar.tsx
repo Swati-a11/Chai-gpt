@@ -47,6 +47,9 @@ type Conversation = NonNullable<
   ReturnType<typeof useConversations>["data"]
 >[number];
 
+/**
+ * Main application sidebar — logo, new chat, conversation list, theme toggle, and account.
+ */
 export function AppSidebar() {
   const pathname = usePathname();
   const { data: conversations, isLoading } = useConversations();
@@ -107,6 +110,7 @@ export function AppSidebar() {
   );
 }
 
+/** Renders the conversation list with loading skeletons or an empty-state message. */
 function ChatList({
   conversations,
   isLoading,
@@ -147,6 +151,7 @@ function ChatList({
   );
 }
 
+/** Single sidebar row for a conversation with rename, pin, and delete actions. */
 function ChatItem({
   conversation,
   isActive,
@@ -159,6 +164,7 @@ function ChatItem({
     isActive ? conversation.id : undefined
   );
 
+  /** Prompts the user to rename the conversation and persists the new title. */
   function handleRename() {
     const next = window.prompt("Rename chat", conversation.title);
     if (!next || next.trim() === conversation.title) return;
@@ -218,6 +224,7 @@ function ChatItem({
   );
 }
 
+/** Footer menu with theme toggle and Clerk user account button. */
 function SidebarFooterMenu() {
   const { resolvedTheme, setTheme } = useTheme();
 

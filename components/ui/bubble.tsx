@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/** Vertical stack container for chat message bubbles. */
 function BubbleGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -42,6 +43,7 @@ const bubbleVariants = cva(
   }
 )
 
+/** Styled message bubble with variant and alignment support. */
 function Bubble({
   variant = "default",
   align = "start",
@@ -62,6 +64,7 @@ function Bubble({
   )
 }
 
+/** Inner content area of a {@link Bubble} message. */
 function BubbleContent({
   className,
   render,
@@ -105,6 +108,7 @@ const bubbleReactionsVariants = cva(
   }
 )
 
+/** Floating reaction bar attached to a message bubble. */
 function BubbleReactions({
   side = "bottom",
   align = "end",

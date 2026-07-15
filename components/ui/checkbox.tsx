@@ -5,6 +5,7 @@ import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 import { cn } from "@/lib/utils"
 import { CheckIcon } from "lucide-react"
 
+/** Checkbox input for toggling a boolean value on or off. */
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (
     <CheckboxPrimitive.Root

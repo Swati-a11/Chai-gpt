@@ -12,6 +12,7 @@ const THEMES = { light: "", dark: ".dark" } as const
 const INITIAL_DIMENSION = { width: 320, height: 200 } as const
 type TooltipNameType = number | string
 
+/** Configuration mapping chart series keys to labels, icons, and colors. */
 export type ChartConfig = Record<
   string,
   {
@@ -29,6 +30,7 @@ type ChartContextProps = {
 
 const ChartContext = React.createContext<ChartContextProps | null>(null)
 
+/** Hook to access chart configuration context within chart components. */
 function useChart() {
   const context = React.useContext(ChartContext)
 
@@ -39,6 +41,7 @@ function useChart() {
   return context
 }
 
+/** Responsive wrapper that provides chart context and styling. */
 function ChartContainer({
   id,
   className,
@@ -81,6 +84,7 @@ function ChartContainer({
   )
 }
 
+/** Injects theme-aware CSS color variables for chart series. */
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme ?? config.color
@@ -114,8 +118,10 @@ ${colorConfig
   )
 }
 
+/** Recharts tooltip primitive configured for chart hover interactions. */
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/** Custom tooltip content rendered on chart hover. */
 function ChartTooltipContent({
   active,
   payload,
@@ -270,8 +276,10 @@ function ChartTooltipContent({
   )
 }
 
+/** Recharts legend primitive for displaying chart series labels. */
 const ChartLegend = RechartsPrimitive.Legend
 
+/** Custom legend content for chart series labels. */
 function ChartLegendContent({
   className,
   hideIcon = false,

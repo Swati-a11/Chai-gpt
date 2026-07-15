@@ -6,18 +6,22 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
 
+/** Root container for a click-triggered dropdown menu. */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
 
+/** Portal that renders dropdown menu content outside the DOM hierarchy. */
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
+/** Element that opens the dropdown menu on click. */
 function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 }
 
+/** Floating menu panel displayed when the dropdown is open. */
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,
@@ -49,10 +53,12 @@ function DropdownMenuContent({
   )
 }
 
+/** Group of related items within a dropdown menu. */
 function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 }
 
+/** Non-interactive label for a dropdown menu section. */
 function DropdownMenuLabel({
   className,
   inset,
@@ -73,6 +79,7 @@ function DropdownMenuLabel({
   )
 }
 
+/** Clickable action item within a dropdown menu. */
 function DropdownMenuItem({
   className,
   inset,
@@ -96,10 +103,12 @@ function DropdownMenuItem({
   )
 }
 
+/** Root for a nested submenu within a dropdown menu. */
 function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
 }
 
+/** Item that opens a nested dropdown submenu. */
 function DropdownMenuSubTrigger({
   className,
   inset,
@@ -124,6 +133,7 @@ function DropdownMenuSubTrigger({
   )
 }
 
+/** Nested submenu panel within a dropdown menu. */
 function DropdownMenuSubContent({
   align = "start",
   alignOffset = -3,
@@ -145,6 +155,7 @@ function DropdownMenuSubContent({
   )
 }
 
+/** Toggleable checkbox item within a dropdown menu. */
 function DropdownMenuCheckboxItem({
   className,
   children,
@@ -179,6 +190,7 @@ function DropdownMenuCheckboxItem({
   )
 }
 
+/** Group of mutually exclusive radio items in a dropdown menu. */
 function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
   return (
     <MenuPrimitive.RadioGroup
@@ -188,6 +200,7 @@ function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
   )
 }
 
+/** Single radio option within a dropdown menu group. */
 function DropdownMenuRadioItem({
   className,
   children,
@@ -220,6 +233,7 @@ function DropdownMenuRadioItem({
   )
 }
 
+/** Visual divider between dropdown menu sections. */
 function DropdownMenuSeparator({
   className,
   ...props
@@ -233,6 +247,7 @@ function DropdownMenuSeparator({
   )
 }
 
+/** Keyboard shortcut hint displayed beside a menu item. */
 function DropdownMenuShortcut({
   className,
   ...props

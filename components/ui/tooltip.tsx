@@ -4,6 +4,7 @@ import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "@/lib/utils"
 
+/** Context provider that configures tooltip delay and behavior. */
 function TooltipProvider({
   delay = 0,
   ...props
@@ -17,14 +18,17 @@ function TooltipProvider({
   )
 }
 
+/** Root container for a hover or focus-triggered tooltip. */
 function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
 
+/** Element that shows a tooltip when hovered or focused. */
 function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
 }
 
+/** Floating label displayed on hover or focus over the trigger. */
 function TooltipContent({
   className,
   side = "top",

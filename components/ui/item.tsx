@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 
+/** Vertical list container for {@link Item} rows. */
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -20,6 +21,7 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Horizontal divider between items in a list. */
 function ItemSeparator({
   className,
   ...props
@@ -56,6 +58,7 @@ const itemVariants = cva(
   }
 )
 
+/** Interactive list row with media, title, description, and action slots. */
 function Item({
   className,
   variant = "default",
@@ -97,6 +100,7 @@ const itemMediaVariants = cva(
   }
 )
 
+/** Icon or image area on the left side of an {@link Item}. */
 function ItemMedia({
   className,
   variant = "default",
@@ -112,6 +116,7 @@ function ItemMedia({
   )
 }
 
+/** Main text content area of an {@link Item}. */
 function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -125,6 +130,7 @@ function ItemContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Primary title text for an {@link Item}. */
 function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -138,6 +144,7 @@ function ItemTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Secondary description text below an item title. */
 function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -151,6 +158,7 @@ function ItemDescription({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
+/** Action buttons aligned to the right of an {@link Item}. */
 function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -161,6 +169,7 @@ function ItemActions({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Top row within an item for metadata or inline actions. */
 function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -174,6 +183,7 @@ function ItemHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Bottom row within an item for metadata or inline actions. */
 function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

@@ -4,6 +4,12 @@ import { requireUser } from "@/features/auth/action/require-user";
 import { prisma } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { convertToModelMessages, createIdGenerator, createUIMessageStream, createUIMessageStreamResponse, streamText, toUIMessageStream, type UIMessage } from "ai";
+/**
+ * POST /api/chat — Streams an AI assistant reply for a conversation.
+ *
+ * Validates auth and ownership, persists the user message, then streams the
+ * assistant response via the AI SDK. Final messages are saved when the stream ends.
+ */
 export async function POST(req: Request) {
     await auth.protect();
 

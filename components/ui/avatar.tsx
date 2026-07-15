@@ -5,6 +5,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 
 import { cn } from "@/lib/utils"
 
+/** Circular image container for user or entity profile pictures. */
 function Avatar({
   className,
   size = "default",
@@ -25,6 +26,7 @@ function Avatar({
   )
 }
 
+/** Image displayed inside an {@link Avatar}, with automatic fallback on load failure. */
 function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   return (
     <AvatarPrimitive.Image
@@ -38,6 +40,7 @@ function AvatarImage({ className, ...props }: AvatarPrimitive.Image.Props) {
   )
 }
 
+/** Placeholder shown when the avatar image is unavailable. */
 function AvatarFallback({
   className,
   ...props
@@ -54,6 +57,7 @@ function AvatarFallback({
   )
 }
 
+/** Small status indicator overlaid on the bottom-right of an avatar. */
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -70,6 +74,7 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/** Overlapping row of avatars for showing multiple participants. */
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -83,6 +88,7 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Overflow indicator showing the count of additional avatars in a group. */
 function AvatarGroupCount({
   className,
   ...props

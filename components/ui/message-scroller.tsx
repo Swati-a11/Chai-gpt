@@ -12,12 +12,14 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ArrowDownIcon } from "lucide-react"
 
+/** Context provider for message list scroll state and controls. */
 function MessageScrollerProvider(
   props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>
 ) {
   return <MessageScrollerPrimitive.Provider {...props} />
 }
 
+/** Root scroll container for a virtualized message list. */
 function MessageScroller({
   className,
   ...props
@@ -34,6 +36,7 @@ function MessageScroller({
   )
 }
 
+/** Scrollable viewport area within a message scroller. */
 function MessageScrollerViewport({
   className,
   ...props
@@ -50,6 +53,7 @@ function MessageScrollerViewport({
   )
 }
 
+/** Content wrapper inside the message scroller viewport. */
 function MessageScrollerContent({
   className,
   ...props
@@ -63,6 +67,7 @@ function MessageScrollerContent({
   )
 }
 
+/** Individual message row within the scroller. */
 function MessageScrollerItem({
   className,
   scrollAnchor = false,
@@ -81,6 +86,7 @@ function MessageScrollerItem({
   )
 }
 
+/** Floating button for scrolling within the message list. */
 function MessageScrollerButton({
   direction = "end",
   className,
@@ -125,7 +131,13 @@ export {
   MessageScrollerContent,
   MessageScrollerItem,
   MessageScrollerButton,
-  useMessageScroller,
-  useMessageScrollerScrollable,
-  useMessageScrollerVisibility,
 }
+
+/** Hook to access message scroller context and scroll methods. */
+export { useMessageScroller }
+
+/** Hook indicating whether the message list is scrollable. */
+export { useMessageScrollerScrollable }
+
+/** Hook tracking visibility state of scroller UI elements. */
+export { useMessageScrollerVisibility }

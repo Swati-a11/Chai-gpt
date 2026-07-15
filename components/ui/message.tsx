@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Vertical stack container for grouped chat messages. */
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -12,6 +13,7 @@ function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Single chat message row with avatar, content, and alignment support. */
 function Message({
   className,
   align = "start",
@@ -30,6 +32,7 @@ function Message({
   )
 }
 
+/** Avatar slot positioned beside a {@link Message}. */
 function MessageAvatar({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -43,6 +46,7 @@ function MessageAvatar({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Main content area of a message containing bubbles and attachments. */
 function MessageContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -56,6 +60,7 @@ function MessageContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Header row above message content for sender name or timestamp. */
 function MessageHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -69,6 +74,7 @@ function MessageHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Footer row below message content for metadata or actions. */
 function MessageFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

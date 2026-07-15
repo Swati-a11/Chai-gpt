@@ -4,6 +4,7 @@ import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon } from "lucide-react"
 
+/** Root container for a horizontal site navigation menu. */
 function NavigationMenu({
   align = "start",
   className,
@@ -26,6 +27,7 @@ function NavigationMenu({
   )
 }
 
+/** List of top-level navigation menu items. */
 function NavigationMenuList({
   className,
   ...props
@@ -42,6 +44,7 @@ function NavigationMenuList({
   )
 }
 
+/** Individual item within a navigation menu. */
 function NavigationMenuItem({
   className,
   ...props
@@ -55,10 +58,12 @@ function NavigationMenuItem({
   )
 }
 
+/** Style utility for navigation menu trigger elements. */
 const navigationMenuTriggerStyle = cva(
   "group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center rounded-2xl px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-muted focus:bg-muted focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-popup-open:bg-muted/50 data-popup-open:hover:bg-muted data-open:bg-muted/50 data-open:hover:bg-muted data-open:focus:bg-muted"
 )
 
+/** Button that opens a navigation dropdown panel. */
 function NavigationMenuTrigger({
   className,
   children,
@@ -76,6 +81,7 @@ function NavigationMenuTrigger({
   )
 }
 
+/** Dropdown panel with navigation links or content. */
 function NavigationMenuContent({
   className,
   ...props
@@ -92,6 +98,7 @@ function NavigationMenuContent({
   )
 }
 
+/** Positions navigation dropdown content relative to its trigger. */
 function NavigationMenuPositioner({
   className,
   side = "bottom",
@@ -121,6 +128,7 @@ function NavigationMenuPositioner({
   )
 }
 
+/** Clickable navigation link within the menu. */
 function NavigationMenuLink({
   className,
   ...props
@@ -137,6 +145,7 @@ function NavigationMenuLink({
   )
 }
 
+/** Animated indicator showing the active navigation item. */
 function NavigationMenuIndicator({
   className,
   ...props

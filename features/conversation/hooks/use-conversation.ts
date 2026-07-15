@@ -13,6 +13,9 @@ import {
 import { queryKeys } from "../utils/query-keys";
 
 
+/**
+ * Fetches all conversations for the sidebar via React Query.
+ */
 export function useConversations() {
     return useQuery({
         queryKey: queryKeys.conversations.all,
@@ -20,6 +23,9 @@ export function useConversations() {
     });
 }
 
+/**
+ * Mutation hook to create a new conversation and navigate to it.
+ */
 export function useCreateConversation() {
     const queryClient = useQueryClient();
     const router = useRouter();

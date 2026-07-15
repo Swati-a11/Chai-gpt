@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/** Centered placeholder for empty states with dashed border styling. */
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -15,6 +16,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Top section of an {@link Empty} state for icon, title, and description. */
 function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -40,6 +42,7 @@ const emptyMediaVariants = cva(
   }
 )
 
+/** Icon or illustration area within an empty state. */
 function EmptyMedia({
   className,
   variant = "default",
@@ -55,6 +58,7 @@ function EmptyMedia({
   )
 }
 
+/** Primary heading text for an empty state. */
 function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -68,6 +72,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Supporting description explaining why the area is empty. */
 function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <div
@@ -81,6 +86,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
+/** Bottom section of an empty state for actions or extra content. */
 function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

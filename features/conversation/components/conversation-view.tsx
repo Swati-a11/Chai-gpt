@@ -17,7 +17,9 @@ type ConversationViewProps = {
     initialMessages: UIMessage[];
 };
 
-
+/**
+ * Main chat view — header, message list (or empty state), and composer with streaming.
+ */
 export const ConversationView = ({ conversationId, initialMessages }: ConversationViewProps) => {
 
     const queryClient = useQueryClient();

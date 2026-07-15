@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 
+/** Animated placeholder block for loading content layouts. */
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

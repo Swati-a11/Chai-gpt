@@ -2,6 +2,7 @@ import { Slider as SliderPrimitive } from "@base-ui/react/slider"
 
 import { cn } from "@/lib/utils"
 
+/** Range slider for selecting a numeric value within a min-max range. */
 function Slider({
   className,
   defaultValue,

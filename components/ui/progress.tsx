@@ -4,6 +4,7 @@ import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 
 import { cn } from "@/lib/utils"
 
+/** Progress bar showing completion toward a goal or total. */
 function Progress({
   className,
   children,
@@ -25,6 +26,7 @@ function Progress({
   )
 }
 
+/** Background track behind the progress indicator. */
 function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   return (
     <ProgressPrimitive.Track
@@ -38,6 +40,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   )
 }
 
+/** Filled portion of the progress bar representing current value. */
 function ProgressIndicator({
   className,
   ...props
@@ -51,6 +54,7 @@ function ProgressIndicator({
   )
 }
 
+/** Accessible label describing what the progress bar measures. */
 function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
   return (
     <ProgressPrimitive.Label
@@ -61,6 +65,7 @@ function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
   )
 }
 
+/** Numeric value display for the current progress percentage. */
 function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
   return (
     <ProgressPrimitive.Value

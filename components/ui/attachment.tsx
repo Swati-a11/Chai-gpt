@@ -24,6 +24,7 @@ const attachmentVariants = cva(
   }
 )
 
+/** Card-style container for displaying a file or media attachment. */
 function Attachment({
   className,
   state = "done",
@@ -62,6 +63,7 @@ const attachmentMediaVariants = cva(
   }
 )
 
+/** Thumbnail or icon area for an {@link Attachment}. */
 function AttachmentMedia({
   className,
   variant = "icon",
@@ -77,6 +79,7 @@ function AttachmentMedia({
   )
 }
 
+/** Text content area for attachment title and description. */
 function AttachmentContent({
   className,
   ...props
@@ -93,6 +96,7 @@ function AttachmentContent({
   )
 }
 
+/** Primary label showing the attachment file name. */
 function AttachmentTitle({
   className,
   ...props
@@ -109,6 +113,7 @@ function AttachmentTitle({
   )
 }
 
+/** Secondary text showing attachment size, status, or error details. */
 function AttachmentDescription({
   className,
   ...props
@@ -126,6 +131,7 @@ function AttachmentDescription({
   )
 }
 
+/** Container for action buttons on an {@link Attachment}. */
 function AttachmentActions({
   className,
   ...props
@@ -142,6 +148,7 @@ function AttachmentActions({
   )
 }
 
+/** Icon button for attachment actions such as remove or download. */
 function AttachmentAction({
   className,
   variant,
@@ -159,6 +166,7 @@ function AttachmentAction({
   )
 }
 
+/** Invisible overlay that makes the entire attachment clickable. */
 function AttachmentTrigger({
   className,
   render,
@@ -181,6 +189,7 @@ function AttachmentTrigger({
   })
 }
 
+/** Horizontally scrollable row of {@link Attachment} items. */
 function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

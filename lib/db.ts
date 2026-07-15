@@ -7,6 +7,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+/**
+ * Creates a Prisma client backed by the PostgreSQL adapter.
+ *
+ * @throws {Error} When `DATABASE_URL` is not set.
+ */
 function createPrismaClient() {
   const url = process.env.DATABASE_URL;
   if (!url) {
@@ -19,6 +24,7 @@ function createPrismaClient() {
 }
 
 
+/** Singleton Prisma client; reused in development to avoid hot-reload connection leaks. */
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 

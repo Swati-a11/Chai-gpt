@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+/** Style variants for the {@link Marker} component. */
 const markerVariants = cva(
   "group/marker relative flex min-h-4 w-full items-center gap-2 text-left text-sm text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [a]:underline [a]:underline-offset-3 [a]:hover:text-foreground",
   {
@@ -19,6 +20,7 @@ const markerVariants = cva(
   }
 )
 
+/** Inline label or divider marker for section boundaries in content. */
 function Marker({
   className,
   variant = "default",
@@ -41,6 +43,7 @@ function Marker({
   })
 }
 
+/** Optional icon displayed before marker content. */
 function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -55,6 +58,7 @@ function MarkerIcon({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/** Text content of a {@link Marker} label or divider. */
 function MarkerContent({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

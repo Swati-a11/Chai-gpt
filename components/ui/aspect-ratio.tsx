@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 
+/** Container that maintains a fixed width-to-height ratio for its children. */
 function AspectRatio({
   ratio,
   className,

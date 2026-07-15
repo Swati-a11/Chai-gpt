@@ -4,10 +4,15 @@ import { isTextUIPart, type UIMessage } from "ai";
 import type { Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/db";
 
+/** Extracts plain text from an AI SDK `UIMessage` by joining all text parts. */
 function getMessageText(message: UIMessage) {
   return message.parts.filter(isTextUIPart).map((part) => part.text).join("");
 }
 
+/**
+ * Normalizes stored message parts from the database into AI SDK `UIMessage` parts.
+ * Falls back to a single text part when no structured parts are stored.
+ */
 function toUIMessageParts(
   parts: Prisma.JsonValue | null,
   content: string
@@ -20,7 +25,12 @@ function toUIMessageParts(
   return [{ type: "text", text: content }];
 }
 
-/** Load DB messages as AI SDK UIMessages for useChat. */
+/**
+ * Loads all messages for a conversation from the database as AI SDK `UIMessage`s.
+ *
+ * @param conversationId - The conversation whose messages to load.
+ * @returns Messages ordered oldest to newest, ready for `useChat`.
+ */
 export async function loadChatMessages(
   conversationId: string
 ): Promise<UIMessage[]> {
@@ -40,7 +50,13 @@ type SaveChatMessagesOptions = {
   updateTitle?: boolean;
 };
 
-/** Upsert UIMessages for a conversation. */
+/**
+ * Upserts AI SDK `UIMessage`s into the database for a conversation.
+ *
+ * @param conversationId - Target conversation ID.
+ * @param messages - Messages to persist (system messages are skipped).
+ * @param options.updateTitle - When true, auto-titles "New Chat" from the first user message.
+ */
 export async function saveChatMessages(
   conversationId: string,
   messages: UIMessage[],

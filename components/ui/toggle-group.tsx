@@ -20,6 +20,7 @@ const ToggleGroupContext = React.createContext<
   orientation: "horizontal",
 })
 
+/** Group of toggle buttons where one or more can be pressed. */
 function ToggleGroup({
   className,
   variant,
@@ -56,6 +57,7 @@ function ToggleGroup({
   )
 }
 
+/** Individual toggle button within a {@link ToggleGroup}. */
 function ToggleGroupItem({
   className,
   children,

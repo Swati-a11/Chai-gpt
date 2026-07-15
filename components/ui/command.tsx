@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/input-group"
 import { SearchIcon, CheckIcon } from "lucide-react"
 
+/** Root container for a searchable command palette. */
 function Command({
   className,
   ...props
@@ -33,6 +34,7 @@ function Command({
   )
 }
 
+/** Modal dialog wrapping a command palette. */
 function CommandDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
@@ -66,6 +68,7 @@ function CommandDialog({
   )
 }
 
+/** Search input for filtering command palette items. */
 function CommandInput({
   className,
   ...props
@@ -89,6 +92,7 @@ function CommandInput({
   )
 }
 
+/** Scrollable list of command palette results. */
 function CommandList({
   className,
   ...props
@@ -105,6 +109,7 @@ function CommandList({
   )
 }
 
+/** Placeholder shown when no commands match the search. */
 function CommandEmpty({
   className,
   ...props
@@ -118,6 +123,7 @@ function CommandEmpty({
   )
 }
 
+/** Labeled group of command items in the palette. */
 function CommandGroup({
   className,
   ...props
@@ -134,6 +140,7 @@ function CommandGroup({
   )
 }
 
+/** Visual divider between command palette groups. */
 function CommandSeparator({
   className,
   ...props
@@ -147,6 +154,7 @@ function CommandSeparator({
   )
 }
 
+/** Selectable action item within the command palette. */
 function CommandItem({
   className,
   children,
@@ -167,6 +175,7 @@ function CommandItem({
   )
 }
 
+/** Keyboard shortcut hint beside a command item. */
 function CommandShortcut({
   className,
   ...props

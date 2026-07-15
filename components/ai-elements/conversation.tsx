@@ -8,8 +8,10 @@ import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
+/** Props for the auto-scrolling {@link Conversation} container. */
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 
+/** Auto-scrolling chat container that sticks to the latest message. */
 export const Conversation = ({ className, ...props }: ConversationProps) => (
   <StickToBottom
     className={cn("relative flex-1 overflow-y-hidden", className)}
@@ -20,10 +22,12 @@ export const Conversation = ({ className, ...props }: ConversationProps) => (
   />
 );
 
+/** Props for the scrollable message content area inside {@link Conversation}. */
 export type ConversationContentProps = ComponentProps<
   typeof StickToBottom.Content
 >;
 
+/** Inner scrollable content wrapper with vertical spacing between messages. */
 export const ConversationContent = ({
   className,
   ...props
@@ -34,12 +38,14 @@ export const ConversationContent = ({
   />
 );
 
+/** Props for the empty-state placeholder inside a conversation. */
 export type ConversationEmptyStateProps = ComponentProps<"div"> & {
   title?: string;
   description?: string;
   icon?: React.ReactNode;
 };
 
+/** Placeholder shown when a conversation has no messages yet. */
 export const ConversationEmptyState = ({
   className,
   title = "No messages yet",
@@ -69,8 +75,10 @@ export const ConversationEmptyState = ({
   </div>
 );
 
+/** Props for the floating scroll-to-bottom button. */
 export type ConversationScrollButtonProps = ComponentProps<typeof Button>;
 
+/** Floating button that scrolls to the latest message when not at the bottom. */
 export const ConversationScrollButton = ({
   className,
   ...props
@@ -100,12 +108,14 @@ export const ConversationScrollButton = ({
   );
 };
 
+/** Extracts plain text from a `UIMessage` for markdown export. */
 const getMessageText = (message: UIMessage): string =>
   message.parts
     .filter((part) => part.type === "text")
     .map((part) => part.text)
     .join("");
 
+/** Props for the conversation download button. */
 export type ConversationDownloadProps = Omit<
   ComponentProps<typeof Button>,
   "onClick"
@@ -115,12 +125,19 @@ export type ConversationDownloadProps = Omit<
   formatMessage?: (message: UIMessage, index: number) => string;
 };
 
+/** Default formatter that converts a message to a markdown role + text line. */
 const defaultFormatMessage = (message: UIMessage): string => {
   const roleLabel =
     message.role.charAt(0).toUpperCase() + message.role.slice(1);
   return `**${roleLabel}:** ${getMessageText(message)}`;
 };
 
+/**
+ * Converts an array of `UIMessage`s into a markdown string.
+ *
+ * @param messages - Messages to serialize.
+ * @param formatMessage - Optional per-message formatter.
+ */
 export const messagesToMarkdown = (
   messages: UIMessage[],
   formatMessage: (
@@ -129,6 +146,7 @@ export const messagesToMarkdown = (
   ) => string = defaultFormatMessage
 ): string => messages.map((msg, i) => formatMessage(msg, i)).join("\n\n");
 
+/** Button that downloads the conversation as a `.md` file. */
 export const ConversationDownload = ({
   messages,
   filename = "conversation.md",

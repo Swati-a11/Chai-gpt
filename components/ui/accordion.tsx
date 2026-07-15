@@ -3,6 +3,7 @@ import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
+/** Root container for a vertically stacked set of collapsible sections. */
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
     <AccordionPrimitive.Root
@@ -16,6 +17,7 @@ function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   )
 }
 
+/** A single collapsible section within an {@link Accordion}. */
 function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   return (
     <AccordionPrimitive.Item
@@ -26,6 +28,7 @@ function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
   )
 }
 
+/** Clickable header that toggles the visibility of an accordion section. */
 function AccordionTrigger({
   className,
   children,
@@ -49,6 +52,7 @@ function AccordionTrigger({
   )
 }
 
+/** Collapsible panel that reveals the content of an accordion section. */
 function AccordionContent({
   className,
   children,

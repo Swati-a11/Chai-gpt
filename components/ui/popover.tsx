@@ -5,14 +5,17 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 
 import { cn } from "@/lib/utils"
 
+/** Root container for a click-triggered floating popover panel. */
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
+/** Element that toggles the popover open and closed on click. */
 function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
   return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 }
 
+/** Floating panel displayed when the popover is open. */
 function PopoverContent({
   className,
   align = "center",
@@ -47,6 +50,7 @@ function PopoverContent({
   )
 }
 
+/** Top section of a popover for title and description. */
 function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -57,6 +61,7 @@ function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Accessible heading for a {@link Popover}. */
 function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
   return (
     <PopoverPrimitive.Title
@@ -67,6 +72,7 @@ function PopoverTitle({ className, ...props }: PopoverPrimitive.Title.Props) {
   )
 }
 
+/** Supporting description text within a {@link Popover}. */
 function PopoverDescription({
   className,
   ...props

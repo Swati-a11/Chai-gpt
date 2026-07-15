@@ -24,6 +24,7 @@ function useDrawer() {
   return context
 }
 
+/** Root container for a swipeable bottom or side drawer panel. */
 function Drawer({
   modal = true,
   showSwipeHandle = false,
@@ -52,18 +53,22 @@ function Drawer({
   )
 }
 
+/** Element that opens the drawer when activated. */
 function DrawerTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
+/** Portal that renders drawer content outside the DOM hierarchy. */
 function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
+/** Button or element that closes the drawer. */
 function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
+/** Semi-transparent backdrop behind the drawer panel. */
 function DrawerOverlay({
   className,
   ...props
@@ -80,6 +85,7 @@ function DrawerOverlay({
   )
 }
 
+/** Draggable handle indicating the drawer can be swiped to dismiss. */
 function DrawerSwipeHandle({
   className,
   ...props
@@ -97,6 +103,7 @@ function DrawerSwipeHandle({
   )
 }
 
+/** Swipeable panel containing the drawer UI. */
 function DrawerContent({
   className,
   children,
@@ -164,6 +171,7 @@ function DrawerContent({
   )
 }
 
+/** Top section of the drawer for title and description. */
 function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -177,6 +185,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Bottom section of the drawer for action buttons. */
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -187,6 +196,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Accessible heading for the drawer. */
 function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   return (
     <DrawerPrimitive.Title
@@ -200,6 +210,7 @@ function DrawerTitle({ className, ...props }: DrawerPrimitive.Title.Props) {
   )
 }
 
+/** Supplementary text explaining the drawer's purpose. */
 function DrawerDescription({
   className,
   ...props

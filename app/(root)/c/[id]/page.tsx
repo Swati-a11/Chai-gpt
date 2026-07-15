@@ -8,6 +8,9 @@ type ConversationPageProps = {
     params: Promise<{ id: string }>;
   };
 
+/**
+ * Conversation page — loads messages and renders the chat UI for a given ID.
+ */
 const page = async({params}:ConversationPageProps) => {
     const {id} = await params;
 

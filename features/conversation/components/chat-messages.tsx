@@ -15,6 +15,7 @@ import {
 } from "@/components/ai-elements/message";
 import { Loader } from "@/components/ai-elements/loader";
 
+/** Extracts plain text from a `UIMessage` by joining all text parts. */
 function getMessageText(message: UIMessage) {
   return message.parts
     .filter(isTextUIPart)
@@ -27,6 +28,9 @@ type ChatMessagesProps = {
   status: ChatStatus;
 };
 
+/**
+ * Renders the conversation message list with markdown responses and a loading indicator.
+ */
 export function ChatMessages({ messages, status }: ChatMessagesProps) {
   const isWaiting =
     status === "submitted" && messages.at(-1)?.role === "user";

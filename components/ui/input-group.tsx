@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
+/** Composite input container with addons, buttons, and prefix/suffix slots. */
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -43,6 +44,7 @@ const inputGroupAddonVariants = cva(
   }
 )
 
+/** Prefix or suffix addon area within an {@link InputGroup}. */
 function InputGroupAddon({
   className,
   align = "inline-start",
@@ -82,6 +84,7 @@ const inputGroupButtonVariants = cva(
   }
 )
 
+/** Compact button embedded inside an {@link InputGroup}. */
 function InputGroupButton({
   className,
   type = "button",
@@ -103,6 +106,7 @@ function InputGroupButton({
   )
 }
 
+/** Static text label within an {@link InputGroup} addon. */
 function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -115,6 +119,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/** Borderless input styled for use inside an {@link InputGroup}. */
 function InputGroupInput({
   className,
   ...props
@@ -131,6 +136,7 @@ function InputGroupInput({
   )
 }
 
+/** Borderless textarea styled for use inside an {@link InputGroup}. */
 function InputGroupTextarea({
   className,
   ...props

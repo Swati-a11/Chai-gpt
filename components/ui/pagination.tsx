@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 
+/** Navigation landmark for paginated content controls. */
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
@@ -16,6 +17,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   )
 }
 
+/** List container for pagination links and controls. */
 function PaginationContent({
   className,
   ...props
@@ -29,6 +31,7 @@ function PaginationContent({
   )
 }
 
+/** List item wrapper for a single pagination control. */
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />
 }
@@ -38,6 +41,7 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">
 
+/** Clickable page number or navigation link in pagination. */
 function PaginationLink({
   className,
   isActive,
@@ -62,6 +66,7 @@ function PaginationLink({
   )
 }
 
+/** Link to navigate to the previous page. */
 function PaginationPrevious({
   className,
   text = "Previous",
@@ -80,6 +85,7 @@ function PaginationPrevious({
   )
 }
 
+/** Link to navigate to the next page. */
 function PaginationNext({
   className,
   text = "Next",
@@ -98,6 +104,7 @@ function PaginationNext({
   )
 }
 
+/** Collapsed indicator for hidden page numbers in pagination. */
 function PaginationEllipsis({
   className,
   ...props

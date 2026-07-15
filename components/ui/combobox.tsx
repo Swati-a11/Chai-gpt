@@ -13,12 +13,15 @@ import {
 } from "@/components/ui/input-group"
 import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
 
+/** Root container for a searchable combobox with single or multi-select. */
 const Combobox = ComboboxPrimitive.Root
 
+/** Displays the currently selected combobox value. */
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />
 }
 
+/** Button that opens the combobox dropdown. */
 function ComboboxTrigger({
   className,
   children,
@@ -36,6 +39,7 @@ function ComboboxTrigger({
   )
 }
 
+/** Button that clears the current combobox selection. */
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
@@ -49,6 +53,7 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   )
 }
 
+/** Text input for searching and selecting combobox options. */
 function ComboboxInput({
   className,
   children,
@@ -84,6 +89,7 @@ function ComboboxInput({
   )
 }
 
+/** Floating dropdown panel for combobox options. */
 function ComboboxContent({
   className,
   side = "bottom",
@@ -118,6 +124,7 @@ function ComboboxContent({
   )
 }
 
+/** Scrollable list of combobox options. */
 function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   return (
     <ComboboxPrimitive.List
@@ -131,6 +138,7 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
   )
 }
 
+/** Single selectable option within a combobox. */
 function ComboboxItem({
   className,
   children,
@@ -157,6 +165,7 @@ function ComboboxItem({
   )
 }
 
+/** Labeled group of combobox options. */
 function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
   return (
     <ComboboxPrimitive.Group
@@ -167,6 +176,7 @@ function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
   )
 }
 
+/** Non-interactive label for a combobox option group. */
 function ComboboxLabel({
   className,
   ...props
@@ -180,12 +190,14 @@ function ComboboxLabel({
   )
 }
 
+/** Collection wrapper for combobox list items. */
 function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
   return (
     <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />
   )
 }
 
+/** Placeholder shown when no combobox options match. */
 function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
   return (
     <ComboboxPrimitive.Empty
@@ -199,6 +211,7 @@ function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
   )
 }
 
+/** Visual divider between combobox option groups. */
 function ComboboxSeparator({
   className,
   ...props
@@ -212,6 +225,7 @@ function ComboboxSeparator({
   )
 }
 
+/** Container for selected value chips in a multi-select combobox. */
 function ComboboxChips({
   className,
   ...props
@@ -229,6 +243,7 @@ function ComboboxChips({
   )
 }
 
+/** Removable chip representing a selected combobox value. */
 function ComboboxChip({
   className,
   children,
@@ -260,6 +275,7 @@ function ComboboxChip({
   )
 }
 
+/** Inline input for adding chips in a multi-select combobox. */
 function ComboboxChipsInput({
   className,
   ...props
@@ -273,6 +289,7 @@ function ComboboxChipsInput({
   )
 }
 
+/** Hook returning a ref to anchor combobox positioning. */
 function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null)
 }

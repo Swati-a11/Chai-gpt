@@ -7,6 +7,7 @@ type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> & {
   size?: "sm" | "default"
 }
 
+/** Styled native HTML select dropdown with custom chevron icon. */
 function NativeSelect({
   className,
   size = "default",
@@ -32,6 +33,7 @@ function NativeSelect({
   )
 }
 
+/** Option item within a {@link NativeSelect}. */
 function NativeSelectOption({
   className,
   ...props
@@ -45,6 +47,7 @@ function NativeSelectOption({
   )
 }
 
+/** Labeled group of options within a {@link NativeSelect}. */
 function NativeSelectOptGroup({
   className,
   ...props

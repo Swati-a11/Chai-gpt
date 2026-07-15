@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Bordered container for grouping related content with header and footer slots. */
 function Card({
   className,
   size = "default",
@@ -20,6 +21,7 @@ function Card({
   )
 }
 
+/** Top section of a {@link Card} for title, description, and actions. */
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -33,6 +35,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Primary heading text for a {@link Card}. */
 function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -43,6 +46,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Supporting description text below the card title. */
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -53,6 +57,7 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Action slot positioned in the top-right corner of a card header. */
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -66,6 +71,7 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Main body content area of a {@link Card}. */
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -76,6 +82,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Bottom section of a {@link Card} for actions or supplementary info. */
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

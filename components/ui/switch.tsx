@@ -4,6 +4,7 @@ import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
 
 import { cn } from "@/lib/utils"
 
+/** Toggle switch for enabling or disabling a boolean setting. */
 function Switch({
   className,
   size = "default",

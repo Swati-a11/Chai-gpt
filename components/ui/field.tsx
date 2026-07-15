@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
+/** Fieldset grouping related form fields with shared context. */
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
     <fieldset
@@ -20,6 +21,7 @@ function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   )
 }
 
+/** Legend or label heading for a {@link FieldSet} or field group. */
 function FieldLegend({
   className,
   variant = "legend",
@@ -38,6 +40,7 @@ function FieldLegend({
   )
 }
 
+/** Container for stacking multiple form fields with consistent spacing. */
 function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -69,6 +72,7 @@ const fieldVariants = cva(
   }
 )
 
+/** Single form field with label, control, description, and error slots. */
 function Field({
   className,
   orientation = "vertical",
@@ -85,6 +89,7 @@ function Field({
   )
 }
 
+/** Wrapper for the input control and its helper text within a field. */
 function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -98,6 +103,7 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Accessible label associated with a form field control. */
 function FieldLabel({
   className,
   ...props
@@ -115,6 +121,7 @@ function FieldLabel({
   )
 }
 
+/** Non-label title text for a field when a native label is not needed. */
 function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -128,6 +135,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Helper text providing additional context below a field label. */
 function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -143,6 +151,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
+/** Labeled divider separating groups of fields within a form. */
 function FieldSeparator({
   children,
   className,
@@ -173,6 +182,7 @@ function FieldSeparator({
   )
 }
 
+/** Validation error message displayed below an invalid field. */
 function FieldError({
   className,
   children,

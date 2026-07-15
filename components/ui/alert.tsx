@@ -19,6 +19,7 @@ const alertVariants = cva(
   }
 )
 
+/** Inline alert banner for status messages with optional icon and action. */
 function Alert({
   className,
   variant,
@@ -34,6 +35,7 @@ function Alert({
   )
 }
 
+/** Short, prominent title for an {@link Alert}. */
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -47,6 +49,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Supporting description text displayed below an alert title. */
 function AlertDescription({
   className,
   ...props
@@ -63,6 +66,7 @@ function AlertDescription({
   )
 }
 
+/** Action slot positioned in the top-right corner of an {@link Alert}. */
 function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

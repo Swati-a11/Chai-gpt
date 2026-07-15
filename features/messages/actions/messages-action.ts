@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import type { MessageRole } from "@/lib/generated/prisma/client";
 
 
+/** Shape of a message record returned from the database. */
 export type MessageItem = {
     id: string;
     conversationId: string;
@@ -15,6 +16,11 @@ export type MessageItem = {
     updatedAt: Date;
 };
 
+/**
+ * Verifies that a conversation exists and belongs to the given user.
+ *
+ * @throws {Error} When the conversation is not found.
+ */
 async function assertOwnsConversation(conversationId: string, userId: string) {
     const conversation = await prisma.conversation.findFirst({
         where: { id: conversationId, userId },

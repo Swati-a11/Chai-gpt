@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 
+/** Style variants for the {@link ButtonGroup} component. */
 const buttonGroupVariants = cva(
   "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[>[data-variant=outline]]:*:data-[slot=input-group]:border-border has-[>[data-variant=outline]]:*:data-[slot=select-trigger]:border-border has-[>[data-variant=outline]]:[&>[data-slot=input-group]:has(:focus-visible)]:border-ring has-[>[data-variant=outline]]:[&>[data-slot=select-trigger]:focus-visible]:border-ring has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-2xl [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 has-[>[data-variant=outline]]:[&>input]:border-border has-[>[data-variant=outline]]:[&>input:focus-visible]:border-ring",
   {
@@ -22,6 +23,7 @@ const buttonGroupVariants = cva(
   }
 )
 
+/** Container that groups adjacent buttons into a single visual unit. */
 function ButtonGroup({
   className,
   orientation,
@@ -38,6 +40,7 @@ function ButtonGroup({
   )
 }
 
+/** Static text label within a {@link ButtonGroup}. */
 function ButtonGroupText({
   className,
   render,
@@ -61,6 +64,7 @@ function ButtonGroupText({
   })
 }
 
+/** Divider separating items within a {@link ButtonGroup}. */
 function ButtonGroupSeparator({
   className,
   orientation = "vertical",

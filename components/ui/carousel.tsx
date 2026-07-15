@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
+/** Embla carousel API instance for programmatic slide navigation. */
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
 type CarouselOptions = UseCarouselParameters[0]
@@ -32,6 +33,7 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null)
 
+/** Hook to access carousel context, API, and navigation methods. */
 function useCarousel() {
   const context = React.useContext(CarouselContext)
 
@@ -42,6 +44,7 @@ function useCarousel() {
   return context
 }
 
+/** Root container for a swipeable content carousel. */
 function Carousel({
   orientation = "horizontal",
   opts,
@@ -132,6 +135,7 @@ function Carousel({
   )
 }
 
+/** Scrollable track containing carousel slides. */
 function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   const { carouselRef, orientation } = useCarousel()
 
@@ -153,6 +157,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Individual slide within a carousel. */
 function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   const { orientation } = useCarousel()
 
@@ -171,6 +176,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Button to navigate to the previous carousel slide. */
 function CarouselPrevious({
   className,
   variant = "outline",
@@ -201,6 +207,7 @@ function CarouselPrevious({
   )
 }
 
+/** Button to navigate to the next carousel slide. */
 function CarouselNext({
   className,
   variant = "outline",

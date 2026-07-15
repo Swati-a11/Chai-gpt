@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 
+/** Styled keyboard shortcut key display. */
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
@@ -13,6 +14,7 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   )
 }
 
+/** Horizontal group of {@link Kbd} elements for multi-key shortcuts. */
 function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <kbd

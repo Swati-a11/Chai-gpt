@@ -6,8 +6,10 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
+/** Root container for a custom select dropdown. */
 const Select = SelectPrimitive.Root
 
+/** Labeled group of options within a {@link Select}. */
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group
@@ -18,6 +20,7 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   )
 }
 
+/** Displays the currently selected option in the trigger. */
 function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   return (
     <SelectPrimitive.Value
@@ -28,6 +31,7 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   )
 }
 
+/** Button that opens the select dropdown and shows the current value. */
 function SelectTrigger({
   className,
   size = "default",
@@ -56,6 +60,7 @@ function SelectTrigger({
   )
 }
 
+/** Floating dropdown list of selectable options. */
 function SelectContent({
   className,
   children,
@@ -95,6 +100,7 @@ function SelectContent({
   )
 }
 
+/** Non-interactive label for a group of select options. */
 function SelectLabel({
   className,
   ...props
@@ -108,6 +114,7 @@ function SelectLabel({
   )
 }
 
+/** Single selectable option within a {@link Select}. */
 function SelectItem({
   className,
   children,
@@ -136,6 +143,7 @@ function SelectItem({
   )
 }
 
+/** Visual divider between groups of select options. */
 function SelectSeparator({
   className,
   ...props
@@ -149,6 +157,7 @@ function SelectSeparator({
   )
 }
 
+/** Scroll button shown at the top of a long select list. */
 function SelectScrollUpButton({
   className,
   ...props
@@ -168,6 +177,7 @@ function SelectScrollUpButton({
   )
 }
 
+/** Scroll button shown at the bottom of a long select list. */
 function SelectScrollDownButton({
   className,
   ...props

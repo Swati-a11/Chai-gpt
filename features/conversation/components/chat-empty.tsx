@@ -8,6 +8,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 
+/** Empty-state placeholder shown before the first message is sent. */
 export function ChatEmpty() {
   return (
     <div className="flex flex-1 items-center justify-center px-4">

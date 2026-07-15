@@ -30,10 +30,12 @@ import {
 } from "react";
 import { Streamdown } from "streamdown";
 
+/** Props for a single message row, including the sender role. */
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
   from: UIMessage["role"];
 };
 
+/** Message row container; aligns user messages right and assistant messages left. */
 export const Message = ({ className, from, ...props }: MessageProps) => (
   <div
     className={cn(
@@ -45,8 +47,10 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
   />
 );
 
+/** Props for the message bubble/content wrapper. */
 export type MessageContentProps = HTMLAttributes<HTMLDivElement>;
 
+/** Styled bubble area containing the message body. */
 export const MessageContent = ({
   children,
   className,
@@ -65,8 +69,10 @@ export const MessageContent = ({
   </div>
 );
 
+/** Props for the horizontal row of message action buttons. */
 export type MessageActionsProps = ComponentProps<"div">;
 
+/** Horizontal flex container for message-level action buttons. */
 export const MessageActions = ({
   className,
   children,
@@ -77,11 +83,13 @@ export const MessageActions = ({
   </div>
 );
 
+/** Props for a single icon action button with optional tooltip. */
 export type MessageActionProps = ComponentProps<typeof Button> & {
   tooltip?: string;
   label?: string;
 };
 
+/** Icon button for message actions (copy, regenerate, etc.) with optional tooltip. */
 export const MessageAction = ({
   tooltip,
   children,
@@ -126,6 +134,7 @@ const MessageBranchContext = createContext<MessageBranchContextType | null>(
   null
 );
 
+/** Hook to access branch navigation state; must be used within `MessageBranch`. */
 const useMessageBranch = () => {
   const context = useContext(MessageBranchContext);
 
@@ -138,11 +147,13 @@ const useMessageBranch = () => {
   return context;
 };
 
+/** Props for the multi-branch message container. */
 export type MessageBranchProps = HTMLAttributes<HTMLDivElement> & {
   defaultBranch?: number;
   onBranchChange?: (branchIndex: number) => void;
 };
 
+/** Context provider for navigating between multiple response variants (branches). */
 export const MessageBranch = ({
   defaultBranch = 0,
   onBranchChange,
@@ -194,8 +205,10 @@ export const MessageBranch = ({
   );
 };
 
+/** Props for the branch content area that shows one variant at a time. */
 export type MessageBranchContentProps = HTMLAttributes<HTMLDivElement>;
 
+/** Renders only the currently active branch child. */
 export const MessageBranchContent = ({
   children,
   ...props
@@ -227,8 +240,10 @@ export const MessageBranchContent = ({
   ));
 };
 
+/** Props for the branch navigation button group. */
 export type MessageBranchSelectorProps = ComponentProps<typeof ButtonGroup>;
 
+/** Button group for branch navigation; hidden when there is only one branch. */
 export const MessageBranchSelector = ({
   className,
   ...props
@@ -252,8 +267,10 @@ export const MessageBranchSelector = ({
   );
 };
 
+/** Props for the previous-branch navigation button. */
 export type MessageBranchPreviousProps = ComponentProps<typeof Button>;
 
+/** Navigates to the previous message branch variant. */
 export const MessageBranchPrevious = ({
   children,
   ...props
@@ -275,8 +292,10 @@ export const MessageBranchPrevious = ({
   );
 };
 
+/** Props for the next-branch navigation button. */
 export type MessageBranchNextProps = ComponentProps<typeof Button>;
 
+/** Navigates to the next message branch variant. */
 export const MessageBranchNext = ({
   children,
   ...props
@@ -298,8 +317,10 @@ export const MessageBranchNext = ({
   );
 };
 
+/** Props for the branch page indicator (`N of M`). */
 export type MessageBranchPageProps = HTMLAttributes<HTMLSpanElement>;
 
+/** Displays the current branch index and total count (e.g. "2 of 3"). */
 export const MessageBranchPage = ({
   className,
   ...props
@@ -319,10 +340,12 @@ export const MessageBranchPage = ({
   );
 };
 
+/** Props for the markdown response renderer. */
 export type MessageResponseProps = ComponentProps<typeof Streamdown>;
 
 const streamdownPlugins = { cjk, code, math, mermaid };
 
+/** Renders assistant markdown with code, math, mermaid, and CJK plugins via Streamdown. */
 export const MessageResponse = memo(
   ({ className, ...props }: MessageResponseProps) => (
     <Streamdown
@@ -341,8 +364,10 @@ export const MessageResponse = memo(
 
 MessageResponse.displayName = "MessageResponse";
 
+/** Props for the message toolbar container. */
 export type MessageToolbarProps = ComponentProps<"div">;
 
+/** Bottom toolbar row for message-level controls (actions, branch selector, etc.). */
 export const MessageToolbar = ({
   className,
   children,
