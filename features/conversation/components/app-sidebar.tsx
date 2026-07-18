@@ -56,6 +56,7 @@ import {
   useDeleteBranch,
 } from "@/features/conversation/hooks/use-conversation";
 import { cn } from "@/lib/utils";
+import { ConversationBranch } from "@/lib/generated/prisma/client";
 
 type Conversation = NonNullable<
   ReturnType<typeof useConversations>["data"]
@@ -265,7 +266,7 @@ function BranchItem({
   isActive,
   isDefault,
 }: {
-  branch: any;
+  branch: ConversationBranch;
   isActive: boolean;
   isDefault: boolean;
 }) {

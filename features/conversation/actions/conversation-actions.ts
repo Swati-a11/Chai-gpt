@@ -3,6 +3,7 @@
 import { requireUser } from "@/features/auth/action/require-user";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { Conversation, ConversationBranch } from "@/lib/generated/prisma/client";
 
 /** Shape of a conversation row returned in the sidebar list. */
 export type ConversationListItem = {
@@ -42,7 +43,7 @@ async function assertOwnsConversation(conversationId: string, userId: string) {
  * @param conversationId - The conversation to load.
  * @throws {Error} When the conversation is not found.
  */
-export async function getConversation(conversationId: string) {
+export async function getConversation(conversationId: string): Promise<Conversation> {
     const user = await requireUser();
     return assertOwnsConversation(conversationId, user.id)
 }
@@ -75,7 +76,7 @@ export async function listConversations(): Promise<ConversationListItem[]> {
  *
  * @param title - Optional title; defaults to "New Chat".
  */
-export async function createConversation(title = "New Chat") {
+export async function createConversation(title = "New Chat"): Promise<Conversation> {
     const user = await requireUser();
 
     return prisma.conversation.create({
@@ -95,7 +96,7 @@ export async function createConversation(title = "New Chat") {
 export async function updateConversation(
     conversationId: string,
     data: { title?: string; isPinned?: boolean; isArchived?: boolean }
-) {
+): Promise<Conversation> {
     const user = await requireUser();
     await assertOwnsConversation(conversationId, user.id);
 
@@ -121,7 +122,7 @@ export async function updateConversation(
  * @param conversationId - The conversation to delete.
  * @returns The deleted conversation ID.
  */
-export async function deleteConversation(conversationId: string) {
+export async function deleteConversation(conversationId: string): Promise<{ id: string }> {
     const user = await requireUser();
     await assertOwnsConversation(conversationId, user.id);
 
@@ -136,7 +137,7 @@ export async function deleteConversation(conversationId: string) {
 /**
  * Lists all branches for a given conversation.
  */
-export async function listBranches(conversationId: string) {
+export async function listBranches(conversationId: string): Promise<ConversationBranch[]> {
   const user = await requireUser();
   await assertOwnsConversation(conversationId, user.id);
 
@@ -149,7 +150,7 @@ export async function listBranches(conversationId: string) {
 /**
  * Renames a specific branch.
  */
-export async function renameBranch(branchId: string, newName: string) {
+export async function renameBranch(branchId: string, newName: string): Promise<ConversationBranch> {
   const user = await requireUser();
   
   const branch = await prisma.conversationBranch.findUnique({
@@ -173,7 +174,7 @@ export async function renameBranch(branchId: string, newName: string) {
 /**
  * Deletes a specific branch. Cannot delete the default (oldest) branch.
  */
-export async function deleteBranch(branchId: string) {
+export async function deleteBranch(branchId: string): Promise<{ id: string; conversationId: string }> {
   const user = await requireUser();
   
   const branch = await prisma.conversationBranch.findUnique({
