@@ -1,7 +1,7 @@
 "use server";
 
 import { isTextUIPart, type UIMessage } from "ai";
-import type { Prisma } from "@/lib/generated/prisma/client";
+import type { Message, Prisma } from "@/lib/generated/prisma/client";
 import { prisma } from "@/lib/db";
 
 /** Extracts plain text from an AI SDK `UIMessage` by joining all text parts. */
@@ -90,7 +90,7 @@ export async function loadChatMessages(
     orderBy: { createdAt: "asc" },
   });
 
-  return rows.map((row) => ({
+  return rows.map((row: Message) => ({
     id: row.id,
     role: row.role === "ASSISTANT" ? "assistant" : "user",
     parts: toUIMessageParts(row.parts, row.content),
