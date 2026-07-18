@@ -131,3 +131,22 @@
     @apply font-sans;
   }
 }
+
+/* Shiki dual-theme syntax token selectors */
+pre code span {
+  color: var(--shiki-light) !important;
+}
+
+.dark pre code span {
+  color: var(--shiki-dark) !important;
+}
+
+/* Theme-aware inline code styling */
+code:not(pre code) {
+  background-color: var(--muted);
+  color: var(--foreground);
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  font-size: 85%;
+  font-family: var(--font-mono);
+}

@@ -1,13 +1,25 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)"])
+const isPublicRoute = createRouteMatcher(["/sign-in(.*)"]);
+const isApiRoute = createRouteMatcher(["/api(.*)"]);
 
-/** Clerk authentication middleware; protects all routes except sign-in. */
+/** Clerk authentication middleware; protects all routes, returning 401 JSON for APIs instead of redirects. */
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    await auth.protect()
+    if (isApiRoute(req)) {
+      const { userId } = await auth();
+      if (!userId) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+    } else {
+      await auth.protect();
+    }
   }
-})
+});
 
 /** Next.js middleware matcher — runs on app routes, API routes, and Clerk endpoints. */
 export const config = {
@@ -19,4 +31,4 @@ export const config = {
     // Always run for Clerk-specific frontend API routes
     '/__clerk/(.*)',
   ],
-}
+};

@@ -32,3 +32,18 @@ export type Conversation = Prisma.ConversationModel
  * 
  */
 export type Message = Prisma.MessageModel
+/**
+ * Model ConversationBranch
+ * 
+ */
+export type ConversationBranch = Prisma.ConversationBranchModel
+/**
+ * Model ToolCall
+ * 
+ */
+export type ToolCall = Prisma.ToolCallModel
+/**
+ * Model ToolResponse
+ * 
+ */
+export type ToolResponse = Prisma.ToolResponseModel

@@ -6,13 +6,15 @@ import React from 'react'
 
 type ConversationPageProps = {
     params: Promise<{ id: string }>;
+    searchParams: Promise<{ branchId?: string }>;
   };
 
 /**
- * Conversation page — loads messages and renders the chat UI for a given ID.
+ * Conversation page — loads messages and renders the chat UI for a given ID and branch ID.
  */
-const page = async({params}:ConversationPageProps) => {
+const page = async({params, searchParams}:ConversationPageProps) => {
     const {id} = await params;
+    const {branchId} = await searchParams;
 
     try {
       await getConversation(id)
@@ -20,13 +22,14 @@ const page = async({params}:ConversationPageProps) => {
       notFound()
     }
 
-    const initialMessages = await loadChatMessages(id);
+    const initialMessages = await loadChatMessages(id, branchId);
     
 
   return (
     <ConversationView
-      key={id}
+      key={`${id}-${branchId || 'default'}`}
       conversationId={id}
+      branchId={branchId}
       initialMessages={initialMessages}
     />
   )

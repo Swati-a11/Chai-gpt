@@ -132,3 +132,73 @@ export async function deleteConversation(conversationId: string) {
     revalidatePath("/");
     return { id: conversationId };
 }
+
+/**
+ * Lists all branches for a given conversation.
+ */
+export async function listBranches(conversationId: string) {
+  const user = await requireUser();
+  await assertOwnsConversation(conversationId, user.id);
+
+  return prisma.conversationBranch.findMany({
+    where: { conversationId },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+/**
+ * Renames a specific branch.
+ */
+export async function renameBranch(branchId: string, newName: string) {
+  const user = await requireUser();
+  
+  const branch = await prisma.conversationBranch.findUnique({
+    where: { id: branchId },
+    include: { conversation: true },
+  });
+
+  if (!branch || branch.conversation.userId !== user.id) {
+    throw new Error("Branch not found or unauthorized");
+  }
+
+  const updated = await prisma.conversationBranch.update({
+    where: { id: branchId },
+    data: { branchName: newName.trim() },
+  });
+
+  revalidatePath(`/c/${branch.conversationId}`);
+  return updated;
+}
+
+/**
+ * Deletes a specific branch. Cannot delete the default (oldest) branch.
+ */
+export async function deleteBranch(branchId: string) {
+  const user = await requireUser();
+  
+  const branch = await prisma.conversationBranch.findUnique({
+    where: { id: branchId },
+    include: { conversation: true },
+  });
+
+  if (!branch || branch.conversation.userId !== user.id) {
+    throw new Error("Branch not found or unauthorized");
+  }
+
+  // Find oldest branch to ensure we don't delete it
+  const oldestBranch = await prisma.conversationBranch.findFirst({
+    where: { conversationId: branch.conversationId },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (oldestBranch?.id === branchId) {
+    throw new Error("Cannot delete the default branch");
+  }
+
+  await prisma.conversationBranch.delete({
+    where: { id: branchId },
+  });
+
+  revalidatePath(`/c/${branch.conversationId}`);
+  return { id: branchId, conversationId: branch.conversationId };
+}

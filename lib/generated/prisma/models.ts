@@ -11,4 +11,7 @@
 export type * from './models/User'
 export type * from './models/Conversation'
 export type * from './models/Message'
+export type * from './models/ConversationBranch'
+export type * from './models/ToolCall'
+export type * from './models/ToolResponse'
 export type * from './commonInputTypes'

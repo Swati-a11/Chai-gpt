@@ -1,19 +1,20 @@
 import type { HTMLAttributes } from "react";
-import { Loader2Icon } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
-/** Props for the {@link Loader} spinner component. */
-export type LoaderProps = HTMLAttributes<HTMLDivElement> & {
-  size?: number;
-};
+/** Props for the {@link Loader} thinking component. */
+export type LoaderProps = HTMLAttributes<HTMLDivElement>;
 
-/** Spinning loading indicator for in-progress assistant responses. */
-export const Loader = ({ className, size = 16, ...props }: LoaderProps) => (
+/** Animated "Thinking..." loading indicator for assistant responses. */
+export const Loader = ({ className, ...props }: LoaderProps) => (
   <div
-    className={cn("inline-flex items-center justify-center", className)}
+    className={cn("flex items-center gap-1.5 text-xs text-muted-foreground/80 font-normal py-0.5 select-none", className)}
     {...props}
   >
-    <Loader2Icon className="animate-spin" size={size} />
+    <span>Thinking</span>
+    <span className="flex gap-1 items-center mt-1">
+      <span className="animate-pulse duration-1000 delay-0 rounded-full size-1 bg-muted-foreground/60" />
+      <span className="animate-pulse duration-1000 delay-200 rounded-full size-1 bg-muted-foreground/60" style={{ animationDelay: '0.2s' }} />
+      <span className="animate-pulse duration-1000 delay-400 rounded-full size-1 bg-muted-foreground/60" style={{ animationDelay: '0.4s' }} />
+    </span>
   </div>
 );

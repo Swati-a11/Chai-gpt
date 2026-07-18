@@ -53,7 +53,10 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Conversation: 'Conversation',
-  Message: 'Message'
+  Message: 'Message',
+  ConversationBranch: 'ConversationBranch',
+  ToolCall: 'ToolCall',
+  ToolResponse: 'ToolResponse'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -110,11 +113,47 @@ export const MessageScalarFieldEnum = {
   content: 'content',
   parts: 'parts',
   metadata: 'metadata',
+  branchId: 'branchId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const ConversationBranchScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  parentBranchId: 'parentBranchId',
+  branchName: 'branchName',
+  createdAt: 'createdAt'
+} as const
+
+export type ConversationBranchScalarFieldEnum = (typeof ConversationBranchScalarFieldEnum)[keyof typeof ConversationBranchScalarFieldEnum]
+
+
+export const ToolCallScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  conversationId: 'conversationId',
+  toolName: 'toolName',
+  arguments: 'arguments',
+  createdAt: 'createdAt'
+} as const
+
+export type ToolCallScalarFieldEnum = (typeof ToolCallScalarFieldEnum)[keyof typeof ToolCallScalarFieldEnum]
+
+
+export const ToolResponseScalarFieldEnum = {
+  id: 'id',
+  toolCallId: 'toolCallId',
+  messageId: 'messageId',
+  conversationId: 'conversationId',
+  response: 'response',
+  createdAt: 'createdAt'
+} as const
+
+export type ToolResponseScalarFieldEnum = (typeof ToolResponseScalarFieldEnum)[keyof typeof ToolResponseScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -17,7 +17,7 @@ import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import type { UIMessage } from "ai";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, CheckIcon, CopyIcon } from "lucide-react";
 import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
 import {
   createContext,
@@ -29,6 +29,90 @@ import {
   useState,
 } from "react";
 import { Streamdown } from "streamdown";
+import { toast } from "sonner";
+import react from "react";
+
+/** Custom pre element renderer to show code toolbar, capitalization, and copying. */
+const CustomPre = ({ children, ...props }: any) => {
+  const codeElement = react.Children.toArray(children).find(
+    (child: any) => child?.type === "code" || child?.props?.node?.tagName === "code"
+  ) as any;
+
+  if (!codeElement) {
+    return <pre {...props}>{children}</pre>;
+  }
+
+  const getCodeText = (node: any): string => {
+    if (!node) return "";
+    if (typeof node === "string") return node;
+    if (Array.isArray(node)) return node.map(getCodeText).join("");
+    if (node.props && node.props.children) return getCodeText(node.props.children);
+    return "";
+  };
+
+  const rawCode = getCodeText(codeElement).trim();
+  const className = codeElement.props?.className || "";
+  const match = /language-(\w+)/.exec(className);
+  const rawLang = match ? match[1] : "code";
+
+  const displayLang = (() => {
+    const l = rawLang.toLowerCase();
+    if (l === "cpp" || l === "c++") return "C++";
+    if (l === "js" || l === "javascript") return "JavaScript";
+    if (l === "ts" || l === "typescript") return "TypeScript";
+    if (l === "py" || l === "python") return "Python";
+    if (l === "html") return "HTML";
+    if (l === "css") return "CSS";
+    if (l === "rs" || l === "rust") return "Rust";
+    if (l === "go") return "Go";
+    if (l === "json") return "JSON";
+    if (l === "sh" || l === "bash" || l === "shell") return "Bash";
+    return rawLang.charAt(0).toUpperCase() + rawLang.slice(1);
+  })();
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(rawCode);
+      setCopied(true);
+      toast.success("Copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      toast.error("Failed to copy code");
+    }
+  };
+
+  return (
+    <div className="relative group my-4 rounded-lg overflow-hidden border border-border bg-zinc-50 dark:bg-zinc-950/80">
+      {/* Sticky Toolbar */}
+      <div className="sticky top-0 z-10 flex h-9 items-center justify-between px-4 bg-zinc-100 dark:bg-zinc-900 border-b border-border text-xs font-mono text-zinc-600 dark:text-zinc-400 select-none">
+        <span>{displayLang}</span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer font-medium"
+        >
+          {copied ? (
+            <>
+              <CheckIcon className="size-3.5 text-emerald-500" />
+              <span>Copied to clipboard</span>
+            </>
+          ) : (
+            <>
+              <CopyIcon className="size-3.5" />
+              <span>Copy</span>
+            </>
+          )}
+        </button>
+      </div>
+      
+      {/* Code Text Content */}
+      <pre className="p-4 overflow-x-auto font-mono text-sm leading-relaxed text-zinc-900 dark:text-zinc-100 bg-zinc-50 dark:bg-zinc-950" {...props}>
+        {children}
+      </pre>
+    </div>
+  );
+};
 
 /** Props for a single message row, including the sender role. */
 export type MessageProps = HTMLAttributes<HTMLDivElement> & {
@@ -109,7 +193,7 @@ export const MessageAction = ({
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>{button}</TooltipTrigger>
+          <TooltipTrigger render={button} />
           <TooltipContent>
             <p>{tooltip}</p>
           </TooltipContent>
@@ -347,16 +431,24 @@ const streamdownPlugins = { cjk, code, math, mermaid };
 
 /** Renders assistant markdown with code, math, mermaid, and CJK plugins via Streamdown. */
 export const MessageResponse = memo(
-  ({ className, ...props }: MessageResponseProps) => (
-    <Streamdown
-      className={cn(
-        "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
-        className
-      )}
-      plugins={streamdownPlugins}
-      {...props}
-    />
-  ),
+  ({ className, ...props }: MessageResponseProps) => {
+    const components = useMemo(() => ({
+      pre: CustomPre
+    }), []);
+
+    return (
+      <Streamdown
+        className={cn(
+          "size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0",
+          className
+        )}
+        plugins={streamdownPlugins}
+        components={components}
+        shikiTheme={["github-light", "github-dark"]}
+        {...props}
+      />
+    );
+  },
   (prevProps, nextProps) =>
     prevProps.children === nextProps.children &&
     nextProps.isAnimating === prevProps.isAnimating
