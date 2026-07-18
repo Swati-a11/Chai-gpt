@@ -1,4 +1,4 @@
-# ChaiGPT Build
+# ChaiGPT 
 
 ChaiGPT Build is a production-ready AI chat application built with **Next.js 15**, **TypeScript**, **Google Gemini**, **Tavily Search**, **Prisma ORM**, **PostgreSQL**, and **Clerk Authentication**.
 
