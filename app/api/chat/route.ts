@@ -20,6 +20,37 @@ function convertToGeminiMessages(messages: UIMessage[]): Content[] {
     });
 }
 
+function validateGeminiRequest(model: string, contents: Content[]) {
+    if (!model) {
+        throw new Error("Validation Error: Model name is missing");
+    }
+    if (!Array.isArray(contents) || contents.length === 0) {
+        throw new Error("Validation Error: contents must be a non-empty array");
+    }
+    for (let i = 0; i < contents.length; i++) {
+        const content = contents[i];
+        if (!content.role || (content.role !== "user" && content.role !== "model")) {
+            throw new Error(`Validation Error: invalid role "${content.role}" at index ${i}. Role must be 'user' or 'model'.`);
+        }
+        if (!Array.isArray(content.parts) || content.parts.length === 0) {
+            throw new Error(`Validation Error: parts must be a non-empty array at index ${i}`);
+        }
+        for (let j = 0; j < content.parts.length; j++) {
+            const part = content.parts[j];
+            const keys = Object.keys(part);
+            const validKeys = [
+                "text", "inlineData", "functionCall", "functionResponse", "fileData",
+                "executableCode", "codeExecutionResult", "thought", "thoughtSignature",
+                "videoMetadata", "toolCall", "toolResponse", "partMetadata"
+            ];
+            const hasValidKey = keys.some(key => validKeys.includes(key));
+            if (!hasValidKey) {
+                throw new Error(`Validation Error: Part at index ${i}, part index ${j} does not contain any valid content field.`);
+            }
+        }
+    }
+}
+
 /**
  * POST /api/chat — Streams an AI assistant reply for a conversation.
  *
@@ -133,6 +164,9 @@ export async function POST(req: Request) {
 
                     const geminiMessages = convertToGeminiMessages(messages);
 
+                    // Validate request before calling Gemini
+                    validateGeminiRequest("gemini-2.5-flash", geminiMessages);
+
                     // Add detailed logging before sending the request
                     const lastUserMessage = messages[messages.length - 1];
                     const promptText = lastUserMessage?.parts
@@ -175,6 +209,8 @@ export async function POST(req: Request) {
                     let hasToolCall = false;
                     let toolCallQuery = "";
                     let toolCallArgs: any = null;
+                    let toolCallId = "";
+                    let toolCallName = "";
 
                     for await (const chunk of responseStream) {
                         console.log(">>> [Streamed Chunk]:", JSON.stringify(chunk));
@@ -187,6 +223,8 @@ export async function POST(req: Request) {
                             const call = chunk.functionCalls[0];
                             toolCallQuery = (call.args as any)?.query || "";
                             toolCallArgs = call.args;
+                            toolCallId = call.id || "";
+                            toolCallName = call.name || "web_search";
                         }
                     }
 
@@ -202,9 +240,18 @@ export async function POST(req: Request) {
                             if (resultsList.length === 0) {
                                 searchSummary = "No search results found.";
                             } else {
-                                searchSummary = resultsList
+                                // Keep only the first 5 results, remove unnecessary metadata, and truncate content
+                                const cleanedResults = resultsList.slice(0, 5).map((r) => ({
+                                    title: r.title,
+                                    url: r.url,
+                                    content: typeof r.content === "string" ? r.content.slice(0, 1000) : "",
+                                    sourceName: r.sourceName,
+                                    rank: r.rank
+                                }));
+                                searchSummary = cleanedResults
                                     .map((r) => `Title: ${r.title}\nURL: ${r.url}\nContent: ${r.content}\nSourceRank: ${r.rank}`)
                                     .join("\n\n");
+                                resultsList = cleanedResults;
                             }
                         } catch (error) {
                             console.error("Search failed:", error);
@@ -213,7 +260,7 @@ export async function POST(req: Request) {
                         }
 
                         toolCallData = {
-                            toolName: "web_search",
+                            toolName: toolCallName || "web_search",
                             arguments: JSON.stringify(toolCallArgs || { query: toolCallQuery }),
                             response: searchFailed ? "Error: live search failed." : JSON.stringify(resultsList),
                         };
@@ -245,30 +292,49 @@ Generate your response following this strict format and layout structure:
 
 Do not write the sources list yourself at the end; it will be appended automatically.`;
 
+                        const secondGeminiMessages = [
+                            ...geminiMessages,
+                            { 
+                                role: "model", 
+                                parts: [{ 
+                                    functionCall: { 
+                                        name: toolCallName || "web_search", 
+                                        args: toolCallArgs || { query: toolCallQuery },
+                                        ...(toolCallId ? { id: toolCallId } : {})
+                                    } 
+                                }] 
+                            },
+                            { 
+                                role: "user", 
+                                parts: [{ 
+                                    functionResponse: { 
+                                        name: toolCallName || "web_search", 
+                                        response: { result: searchSummary },
+                                        ...(toolCallId ? { id: toolCallId } : {})
+                                    } 
+                                }] 
+                            }
+                        ] as Content[];
+
+                        // Validate request before calling Gemini
+                        validateGeminiRequest("gemini-2.5-flash", secondGeminiMessages);
+
+                        // Add logging before the second Gemini request
                         console.log(">>> [Second Stream starting (tool response)]...");
+                        console.log(">>> [Second Stream Model Name]:", "gemini-2.5-flash");
+                        console.log(">>> [Second Stream Full Contents Array]:", JSON.stringify(secondGeminiMessages, null, 2));
+                        console.log(">>> [Second Stream Tool Response Size]:", JSON.stringify(resultsList).length);
+                        console.log(">>> [Second Stream JSON Payload Length]:", JSON.stringify({
+                            model: "gemini-2.5-flash",
+                            contents: secondGeminiMessages,
+                            config: {
+                                systemInstruction: enhancedInstruction
+                            }
+                        }).length);
+
                         const secondStream = await generateStreamWithTimeout({
                             model: "gemini-2.5-flash",
-                            contents: [
-                                ...geminiMessages,
-                                { 
-                                    role: "model", 
-                                    parts: [{ 
-                                        functionCall: { 
-                                            name: "web_search", 
-                                            args: toolCallArgs || { query: toolCallQuery } 
-                                        } 
-                                    }] 
-                                },
-                                { 
-                                    role: "tool", 
-                                    parts: [{ 
-                                        functionResponse: { 
-                                            name: "web_search", 
-                                            response: { result: searchSummary } 
-                                        } 
-                                    }] 
-                                }
-                            ] as Content[],
+                            contents: secondGeminiMessages,
                             config: {
                                 systemInstruction: enhancedInstruction
                             }
@@ -295,8 +361,13 @@ Do not write the sources list yourself at the end; it will be appended automatic
                     controller.close();
                     console.log(">>> [Stream ended successfully]");
                 } catch (err: any) {
-                    // Log the complete error only on the server
-                    console.error(">>> [CRITICAL ERROR IN STREAM GENERATION]:", err.stack || err);
+                    // Log the detailed error properties
+                    console.error(">>> [CRITICAL ERROR IN STREAM GENERATION]:");
+                    console.error("error.code:", err?.code);
+                    console.error("error.status:", err?.status);
+                    console.error("error.message:", err?.message);
+                    console.error("full error object:", err);
+                    console.error("stack trace:", err?.stack || new Error().stack);
                     
                     const isQuotaError = err.status === 429 || 
                                          err.message?.includes("429") || 
@@ -356,7 +427,12 @@ Do not write the sources list yourself at the end; it will be appended automatic
         });
     } catch (globalErr: any) {
         // Log the complete error only on the server
-        console.error("GLOBAL CRITICAL ROUTE ERROR IN POST /api/chat:", globalErr);
+        console.error("GLOBAL CRITICAL ROUTE ERROR IN POST /api/chat:");
+        console.error("error.code:", globalErr?.code);
+        console.error("error.status:", globalErr?.status);
+        console.error("error.message:", globalErr?.message);
+        console.error("full error object:", globalErr);
+        console.error("stack trace:", globalErr?.stack || new Error().stack);
         
         const isQuotaError = globalErr.status === 429 || 
                              globalErr.message?.includes("429") || 
