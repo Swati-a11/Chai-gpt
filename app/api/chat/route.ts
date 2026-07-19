@@ -6,6 +6,12 @@ import { GoogleGenAI, Type, type Content } from "@google/genai";
 import { searchAndRankWeb, cleanDomainName } from "@/lib/tools/web-search";
 import { NextResponse } from "next/server";
 
+// Force dynamic rendering to prevent Next.js from caching the streaming endpoint
+export const dynamic = 'force-dynamic';
+
+/**
+ * Utility function to convert Vercel AI SDK messages to Google Gemini Content format.
+ */
 function convertToGeminiMessages(messages: UIMessage[]): Content[] {
     return messages.map((m) => {
         const role = m.role === "user" ? "user" : "model";
@@ -20,6 +26,9 @@ function convertToGeminiMessages(messages: UIMessage[]): Content[] {
     });
 }
 
+/**
+ * Validates request payload structures before calling the Google Gemini SDK.
+ */
 function validateGeminiRequest(model: string, contents: Content[]) {
     if (!model) {
         throw new Error("Validation Error: Model name is missing");
@@ -52,13 +61,39 @@ function validateGeminiRequest(model: string, contents: Content[]) {
 }
 
 /**
+ * Retries a promise-returning function with exponential backoff on transient errors (429, 5xx, network issues).
+ */
+async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+    try {
+        return await fn();
+    } catch (err: any) {
+        const status = err?.status || err?.statusCode || 0;
+        const msg = (err?.message || "").toLowerCase();
+        
+        // Retry on status code 429, 5xx, or specific quota/rate limit error strings
+        const isTransient = status === 429 || 
+                            status >= 500 || 
+                            msg.includes("429") || 
+                            msg.includes("quota") || 
+                            msg.includes("resource_exhausted") ||
+                            msg.includes("busy") ||
+                            msg.includes("timeout");
+                            
+        if (retries > 0 && isTransient) {
+            console.warn(`>>> [Gemini API Warning]: Transient error encountered (${err.message || status}). Retrying in ${delay}ms... (${retries} retries left)`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            return retryWithBackoff(fn, retries - 1, delay * 2);
+        }
+        throw err;
+    }
+}
+
+/**
  * POST /api/chat — Streams an AI assistant reply for a conversation.
- *
- * Validates auth and ownership, persists the user message, then streams the
- * assistant response via the AI SDK. Final messages are saved when the stream ends.
  */
 export async function POST(req: Request) {
     try {
+        // 1. Clerk Authentication
         const { userId } = await auth();
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -78,6 +113,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing message or conversation id" }, { status: 400 });
         }
 
+        // 2. Prisma Database Operations - Check User
         const user = await prisma.user.findUnique({
             where: { clerkId: userId },
         });
@@ -86,6 +122,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "User not found. Complete onboarding first." }, { status: 404 });
         }
 
+        // 3. Prisma Database Operations - Fetch Conversation
         let conversation;
         try {
             conversation = await prisma.conversation.findFirst({
@@ -103,6 +140,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
         }
 
+        // 4. Load Conversation History
         let previousMessages: UIMessage[] = [];
         try {
             previousMessages = await loadChatMessages(id, branchId);
@@ -117,6 +155,7 @@ export async function POST(req: Request) {
 
         const messages = alreadySaved ? previousMessages : [...previousMessages, message];
 
+        // 5. Save incoming User message if not already saved
         if (!alreadySaved) {
             try {
                 await saveChatMessages(id, [message], {}, branchId);
@@ -126,15 +165,16 @@ export async function POST(req: Request) {
             }
         }
 
+        // 6. Handle Environment Variables Safely
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) {
             console.error("GEMINI_API_KEY is missing from environment variables");
             return NextResponse.json({ error: "Configuration error: GEMINI_API_KEY is missing" }, { status: 500 });
         }
 
-        // Add a temporary server-side log that prints only the first 8 characters of the loaded API key
         console.log(`Loaded Gemini Key: ${apiKey.slice(0, 8)}...`);
 
+        // Initialize Google Gen AI client
         let ai: GoogleGenAI;
         try {
             ai = new GoogleGenAI({ apiKey });
@@ -143,12 +183,15 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: `Gemini initialization error: ${initErr.message || initErr}` }, { status: 500 });
         }
 
+        // Timeout Handling: Wrap the stream generation in a promise race to prevent hanging
         const generateStreamWithTimeout = async (params: any) => {
             const timeoutPromise = new Promise<never>((_, reject) => {
                 setTimeout(() => reject(new Error("Gemini API request timed out after 20 seconds")), 20000);
             });
+            // Wrap the stream call with our transient retry logic
+            const streamPromise = retryWithBackoff(() => ai.models.generateContentStream(params));
             return Promise.race([
-                ai.models.generateContentStream(params),
+                streamPromise,
                 timeoutPromise
             ]);
         };
@@ -162,21 +205,26 @@ export async function POST(req: Request) {
                     // Send text-start to initialize the message block in the AI SDK stream
                     controller.enqueue({ type: "text-start", id: streamTextId });
 
-                    const geminiMessages = convertToGeminiMessages(messages);
+                    // REDUCE CONTEXT SIZE: Limit conversation history to the last 10 messages
+                    const historyLimit = 10;
+                    const truncatedMessages = messages.length > historyLimit ? messages.slice(-historyLimit) : messages;
+                    const geminiMessages = convertToGeminiMessages(truncatedMessages);
 
-                    // Validate request before calling Gemini
+                    // Validate request structure before sending
                     validateGeminiRequest("gemini-2.5-flash", geminiMessages);
 
-                    // Add detailed logging before sending the request
+                    // Detailed pre-request logging
                     const lastUserMessage = messages[messages.length - 1];
                     const promptText = lastUserMessage?.parts
                         ?.filter((p) => p.type === "text")
                         ?.map((p) => p.text)
                         ?.join("") || "";
                     console.log(">>> [Incoming User Prompt]:", promptText);
-                    console.log(">>> [Conversation History Length]:", messages.length);
+                    console.log(">>> [Conversation History Length (Original)]:", messages.length);
+                    console.log(">>> [Conversation History Length (Truncated)]:", truncatedMessages.length);
                     console.log(">>> [Model Name]:", "gemini-2.5-flash");
                     console.log(">>> [Request Sent to Gemini]:", JSON.stringify(geminiMessages, null, 2));
+                    console.log(">>> [Payload Size (Characters)]:", JSON.stringify(geminiMessages).length);
 
                     console.log(">>> [Stream starting]...");
                     const responseStream = await generateStreamWithTimeout({
@@ -212,6 +260,7 @@ export async function POST(req: Request) {
                     let toolCallId = "";
                     let toolCallName = "";
 
+                    // Stream and handle initial response chunks
                     for await (const chunk of responseStream) {
                         console.log(">>> [Streamed Chunk]:", JSON.stringify(chunk));
                         if (chunk.text) {
@@ -228,6 +277,7 @@ export async function POST(req: Request) {
                         }
                     }
 
+                    // If model requested a tool call (web_search)
                     if (hasToolCall && toolCallQuery) {
                         controller.enqueue({ type: "text-delta", id: streamTextId, text: "Searching the web...\n" });
 
@@ -240,17 +290,20 @@ export async function POST(req: Request) {
                             if (resultsList.length === 0) {
                                 searchSummary = "No search results found.";
                             } else {
-                                // Keep only the first 5 results, remove unnecessary metadata, and truncate content
-                                const cleanedResults = resultsList.slice(0, 5).map((r) => ({
+                                // REDUCE CONTEXT SIZE: Keep only the first 3 results (instead of 5)
+                                // Truncate content to 800 characters (instead of 1000)
+                                const cleanedResults = resultsList.slice(0, 3).map((r) => ({
                                     title: r.title,
                                     url: r.url,
-                                    content: typeof r.content === "string" ? r.content.slice(0, 1000) : "",
+                                    content: typeof r.content === "string" ? r.content.slice(0, 800) : "",
                                     sourceName: r.sourceName,
                                     rank: r.rank
                                 }));
+                                
                                 searchSummary = cleanedResults
                                     .map((r) => `Title: ${r.title}\nURL: ${r.url}\nContent: ${r.content}\nSourceRank: ${r.rank}`)
                                     .join("\n\n");
+                                    
                                 resultsList = cleanedResults;
                             }
                         } catch (error) {
@@ -292,6 +345,7 @@ Generate your response following this strict format and layout structure:
 
 Do not write the sources list yourself at the end; it will be appended automatically.`;
 
+                        // Construct the turn payload strictly using official Google Gemini API definitions
                         const secondGeminiMessages = [
                             ...geminiMessages,
                             { 
@@ -305,7 +359,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
                                 }] 
                             },
                             { 
-                                role: "user", 
+                                role: "user", // MUST be 'user' (never 'tool') in the @google/genai SDK
                                 parts: [{ 
                                     functionResponse: { 
                                         name: toolCallName || "web_search", 
@@ -316,10 +370,10 @@ Do not write the sources list yourself at the end; it will be appended automatic
                             }
                         ] as Content[];
 
-                        // Validate request before calling Gemini
+                        // Validate request payload
                         validateGeminiRequest("gemini-2.5-flash", secondGeminiMessages);
 
-                        // Add logging before the second Gemini request
+                        // Logs before the second Gemini request
                         console.log(">>> [Second Stream starting (tool response)]...");
                         console.log(">>> [Second Stream Model Name]:", "gemini-2.5-flash");
                         console.log(">>> [Second Stream Full Contents Array]:", JSON.stringify(secondGeminiMessages, null, 2));
@@ -361,7 +415,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
                     controller.close();
                     console.log(">>> [Stream ended successfully]");
                 } catch (err: any) {
-                    // Log the detailed error properties
+                    // Expose the complete error and stack trace to stdout
                     console.error(">>> [CRITICAL ERROR IN STREAM GENERATION]:");
                     console.error("error.code:", err?.code);
                     console.error("error.status:", err?.status);
@@ -374,10 +428,18 @@ Do not write the sources list yourself at the end; it will be appended automatic
                                          err.message?.includes("quota") || 
                                          err.message?.includes("RESOURCE_EXHAUSTED");
                     
-                    let userFriendlyMsg = "An error occurred while generating the response. Please try again.";
-                    if (isQuotaError) {
-                        userFriendlyMsg = "The AI service is currently busy or has reached its request limit. Please try again in a few moments.";
+                    // NEVER HIDE THE ORIGINAL PROVIDER ERROR: expose it to client in development
+                    const isDev = process.env.NODE_ENV === "development";
+                    let errorDetails = err?.message || "Unknown error";
+                    if (err?.status) {
+                        errorDetails += ` (Status: ${err.status})`;
                     }
+                    
+                    const userFriendlyMsg = isDev 
+                        ? `Backend Error: ${errorDetails}`
+                        : isQuotaError
+                            ? "The AI service is currently busy or has reached its request limit. Please try again in a few moments."
+                            : `An error occurred while generating the response: ${errorDetails}`;
                     
                     controller.enqueue({
                         type: "text-delta",
@@ -390,6 +452,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
             }
         });
 
+        // 6. Return Streaming Response through Vercel AI SDK compatibility layer
         return createUIMessageStreamResponse({
             stream: toUIMessageStream({
                 stream: customStream,
@@ -426,7 +489,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
             })
         });
     } catch (globalErr: any) {
-        // Log the complete error only on the server
+        // Detailed error logging on global route failures
         console.error("GLOBAL CRITICAL ROUTE ERROR IN POST /api/chat:");
         console.error("error.code:", globalErr?.code);
         console.error("error.status:", globalErr?.status);
@@ -441,7 +504,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
                              
         const userFriendlyMsg = isQuotaError 
             ? "The AI service is currently busy or has reached its request limit. Please try again in a few moments."
-            : "An unexpected error occurred. Please try again later.";
+            : `An unexpected error occurred: ${globalErr?.message || "Unknown error"}`;
             
         return NextResponse.json(
             { error: userFriendlyMsg },
