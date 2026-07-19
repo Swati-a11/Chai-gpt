@@ -62,8 +62,9 @@ function validateGeminiRequest(model: string, contents: Content[]) {
 
 /**
  * Retries a promise-returning function with exponential backoff on transient errors (429, 5xx, network issues).
+ * Retry delays start at 2000ms to allow rate limits to clear.
  */
-async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> {
+async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 2000): Promise<T> {
     try {
         return await fn();
     } catch (err: any) {
@@ -131,6 +132,20 @@ export async function POST(req: Request) {
                     userId: user.id
                 }
             });
+            
+            // Add server logs to detect database sync issues or user owner mismatches
+            console.log(`>>> [Conversation Lookup]: id="${id}", userId="${user.id}" (clerkId="${userId}"). Found: ${!!conversation}`);
+            
+            if (!conversation) {
+                // Secondary check: Did it fail due to user ID mismatch or does it not exist at all?
+                const existsNoUserCheck = await prisma.conversation.findUnique({
+                    where: { id }
+                });
+                console.warn(`>>> [DIAGNOSTIC] Conversation exists under direct ID search: ${!!existsNoUserCheck}`);
+                if (existsNoUserCheck) {
+                    console.warn(`>>> [DIAGNOSTIC] Conversation Owner Mismatch! Expected owner userId: "${existsNoUserCheck.userId}", Current authenticated userId: "${user.id}"`);
+                }
+            }
         } catch (dbErr: any) {
             console.error("Database error finding conversation:", dbErr);
             return NextResponse.json({ error: `Database error: ${dbErr.message || dbErr}` }, { status: 500 });
@@ -290,8 +305,8 @@ export async function POST(req: Request) {
                             if (resultsList.length === 0) {
                                 searchSummary = "No search results found.";
                             } else {
-                                // REDUCE CONTEXT SIZE: Keep only the first 3 results (instead of 5)
-                                // Truncate content to 800 characters (instead of 1000)
+                                // REDUCE CONTEXT SIZE: Keep only the first 3 results
+                                // Truncate content to 800 characters
                                 const cleanedResults = resultsList.slice(0, 3).map((r) => ({
                                     title: r.title,
                                     url: r.url,
@@ -345,9 +360,12 @@ Generate your response following this strict format and layout structure:
 
 Do not write the sources list yourself at the end; it will be appended automatically.`;
 
-                        // Construct the turn payload strictly using official Google Gemini API definitions
+                        // OPTIMIZE TOKEN USAGE: Send ONLY the last user prompt that triggered the search
+                        // This prevents sending unnecessary history, drastically reducing payload size and preventing rate limits.
+                        const lastUserMessageGemini = geminiMessages[geminiMessages.length - 1];
+
                         const secondGeminiMessages = [
-                            ...geminiMessages,
+                            lastUserMessageGemini,
                             { 
                                 role: "model", 
                                 parts: [{ 
@@ -359,7 +377,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
                                 }] 
                             },
                             { 
-                                role: "user", // MUST be 'user' (never 'tool') in the @google/genai SDK
+                                role: "user",
                                 parts: [{ 
                                     functionResponse: { 
                                         name: toolCallName || "web_search", 
@@ -428,18 +446,15 @@ Do not write the sources list yourself at the end; it will be appended automatic
                                          err.message?.includes("quota") || 
                                          err.message?.includes("RESOURCE_EXHAUSTED");
                     
-                    // NEVER HIDE THE ORIGINAL PROVIDER ERROR: expose it to client in development
-                    const isDev = process.env.NODE_ENV === "development";
+                    // Expose raw error details
                     let errorDetails = err?.message || "Unknown error";
                     if (err?.status) {
                         errorDetails += ` (Status: ${err.status})`;
                     }
                     
-                    const userFriendlyMsg = isDev 
-                        ? `Backend Error: ${errorDetails}`
-                        : isQuotaError
-                            ? "The AI service is currently busy or has reached its request limit. Please try again in a few moments."
-                            : `An error occurred while generating the response: ${errorDetails}`;
+                    const userFriendlyMsg = isQuotaError
+                        ? "The AI service is currently busy or has reached its request limit. Please try again in a few moments."
+                        : `An error occurred while generating the response: ${errorDetails}`;
                     
                     controller.enqueue({
                         type: "text-delta",
