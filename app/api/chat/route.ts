@@ -453,7 +453,7 @@ Do not write the sources list yourself at the end; it will be appended automatic
                     }
                     
                     const userFriendlyMsg = isQuotaError
-                        ? "The AI service is currently busy or has reached its request limit. Please try again in a few moments."
+                        ? `The AI service is currently busy or has reached its request limit. Please try again in a few moments. (Details: ${errorDetails})`
                         : `An error occurred while generating the response: ${errorDetails}`;
                     
                     controller.enqueue({
